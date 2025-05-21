@@ -1,4 +1,4 @@
-#include <vector>;
+#include <vector>
 #include <unordered_set>
 
 using namespace std;
@@ -17,3 +17,5 @@ vector<int> intersection(vector<int> &nums1, vector<int> &nums2)
     }
     return vector<int>(result_set.begin(), result_set.end());
 }
+
+int main(){}

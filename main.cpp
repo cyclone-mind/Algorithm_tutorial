@@ -24,7 +24,5 @@ int main()
 	delete dog1;  // 修正了删除语法，直接使用 delete 操作符
 
 	const char* str1 = "Hello, World!";
-	str1[2] = "o";
-
 
 }

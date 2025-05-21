@@ -36,4 +36,6 @@ bool isHappy(int n)
 
 int main()
 {
+    bool a = isHappy(3);
+    return 0;
 }

@@ -97,10 +97,7 @@
   "C_Cpp_Runner.compilerArgs": [],
   "C_Cpp_Runner.linkerArgs": [],
   "C_Cpp_Runner.includePaths": [],
-  "C_Cpp_Runner.includeSearch": [
-    "*",
-    "**/*"
-  ],
+  "C_Cpp_Runner.includeSearch": ["*", "**/*"],
   "C_Cpp_Runner.excludeSearch": [
     "**/build",
     "**/build/**",
@@ -164,5 +161,6 @@
     "typeinfo": "cpp",
     "cstring": "cpp",
     "unordered_set": "cpp"
-  }
+  },
+  "C_Cpp.default.compilerPath": "D:/MinGW/bin/gcc.exe"
 }
