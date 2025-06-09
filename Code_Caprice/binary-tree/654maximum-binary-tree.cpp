@@ -6,10 +6,6 @@
 递归地在最大值 右边 的 子数组后缀上 构建右子树。
 返回 nums 构建的 最大二叉树 。
 
-
-TreeNode* constructMaximumBinaryTree(vector<int>& nums) {
-
-    }
 */
 #include <iostream>
 #include <vector>

@@ -23,7 +23,7 @@ struct TreeNode {
 long long maxVal = LONG_MIN; // 因为后台测试数据中有int最小值
 bool isValidBST(TreeNode *root) {
     // 空节点也可以是二叉搜索树
-    if (root == NULL)
+    if (root == nullptr)
         return true;
     // 左节点树是否是二叉搜索树
     bool left = isValidBST(root->left);
