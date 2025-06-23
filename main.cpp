@@ -1,56 +1,59 @@
 #include <iostream>
 
-class Rectangle {
+// Singleton 类定义
+class Singleton {
+  private:
+    // 私有构造函数，防止外部直接实例化
+    Singleton() {
+        std::cout << "Singleton 实例已创建 (局部静态变量方式)." << std::endl;
+    }
 
-private:
-int m_width;
-int m_height;
-public:
-Rectangle(int width, int height) : m_width(width), m_height(height){
-std::cout << "Rectangle object created." << std::endl;
-}
-~Rectangle(){
-	std::cout << "Rectangle object destroyed." << std::endl;
-}
-int getWidth() const {
-	return m_width;
-}
-int getHeight() const {
-	return m_height;
-}
+    // 私有析构函数
+    ~Singleton() {
+        std::cout << "Singleton 实例已销毁 (局部静态变量方式)." << std::endl;
+    }
 
-void setWidth(int w){
-	this->m_width = w;
-}
+    // 禁用拷贝构造函数
+    Singleton(const Singleton &) = delete;
+    // 禁用赋值运算符
+    Singleton &operator=(const Singleton &) = delete;
 
-void setHeight(int h){
-	this->m_height = h;
-}
+  public:
+    // 公共静态方法，用于获取单例实例的引用
+    static Singleton &getInstance() {
+        // 局部静态变量，在第一次调用时初始化，且初始化过程是线程安全的
+        static Singleton instance;
+        return instance;
+    }
 
+    // 示例方法，展示单例功能
+    void showMessage() const {
+        std::cout << "你好，我是单例实例（来自局部静态变量方式）！"
+                  << std::endl;
+    }
 };
 
 int main() {
-    std::cout << "--- Stack Object ---" << std::endl;
-    {
-        Rectangle stackRect(10, 20); // 栈对象，在作用域结束时自动销毁
-        std::cout << "Stack object area: " << stackRect.getWidth() * stackRect.getHeight() << std::endl;
-    } // stackRect goes out of scope here
-    std::cout << "--- Stack Object Scope Ended ---" << std::endl;
+    std::cout << "--- 获取单例实例 (局部静态变量方式) ---" << std::endl;
 
-    std::cout << "\n--- Heap Object ---" << std::endl;
-    // 在堆上创建 Rectangle 对象，并使用指针接收
-    Rectangle* heapRect = nullptr;
-    // Use new to create object on heap
+    // 获取第一个单例实例
+    Singleton &s1 = Singleton::getInstance();
+    std::cout << "s1 的地址: " << &s1 << std::endl;
+    s1.showMessage();
 
-    if (heapRect != nullptr) {
-        // Access members using arrow operator
-        std::cout << "Heap object area: " << heapRect->getWidth() * heapRect->getHeight() << std::endl;
-        // Explicitly delete the heap object
-        // Use delete keyword here
+    // 获取第二个单例实例
+    Singleton &s2 = Singleton::getInstance();
+    std::cout << "s2 的地址: " << &s2 << std::endl;
+    s2.showMessage();
+
+    // 验证 s1 和 s2 是否是同一个实例
+    if (&s1 == &s2) {
+        std::cout << "s1 和 s2 是同一个实例！✨" << std::endl;
+    } else {
+        std::cout << "s1 和 s2 不是同一个实例！⚠️" << std::endl;
     }
-    std::cout << "--- Heap Object Management Ended ---" << std::endl;
 
-
-    std::cout << "\nProgram finished." << std::endl;
+    std::cout << "\n程序执行完毕." << std::endl;
+    // 局部静态变量会在程序结束时自动销毁，无需手动 cleanup
     return 0;
 }
