@@ -1,10 +1,12 @@
 #include <iostream>
 #include <vector>
+
 class Block {
   public:
     virtual void produce() = 0;  // 纯虚函数，没有实现，要求子类中必须重写该方法
     virtual ~Block() {}; // 虚析构函数
 };
+
 class CircleBlock : public Block {
   public:
     void produce() override { std::cout << "Circle Block" << std::endl; }
@@ -12,6 +14,7 @@ class CircleBlock : public Block {
 class SquareBlock : public Block {
     void produce() override { std::cout << "Square Block" << std::endl; }
 };
+
 class BlockFactory {
   public:
     virtual Block *createBlock() = 0;

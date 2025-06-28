@@ -1,59 +1,68 @@
+#include <cstdint>
+#include <cstring>
 #include <iostream>
 
-// Singleton 类定义
-class Singleton {
-  private:
-    // 私有构造函数，防止外部直接实例化
-    Singleton() {
-        std::cout << "Singleton 实例已创建 (局部静态变量方式)." << std::endl;
-    }
-
-    // 私有析构函数
-    ~Singleton() {
-        std::cout << "Singleton 实例已销毁 (局部静态变量方式)." << std::endl;
-    }
-
-    // 禁用拷贝构造函数
-    Singleton(const Singleton &) = delete;
-    // 禁用赋值运算符
-    Singleton &operator=(const Singleton &) = delete;
-
+class String {
   public:
-    // 公共静态方法，用于获取单例实例的引用
-    static Singleton &getInstance() {
-        // 局部静态变量，在第一次调用时初始化，且初始化过程是线程安全的
-        static Singleton instance;
-        return instance;
+    String() = default;
+    String(const char *string) {
+        printf("Created!\n");
+        m_Size = strlen(string);
+        m_Data = new char[m_Size + 1];
+        memcpy(m_Data, string, m_Size);
+        m_Data[m_Size] = '\0';
     }
 
-    // 示例方法，展示单例功能
-    void showMessage() const {
-        std::cout << "你好，我是单例实例（来自局部静态变量方式）！"
-                  << std::endl;
+    String(const String &other) {
+        printf("Copied!\n");
+        m_Size = other.m_Size;
+        m_Data = new char[m_Size + 1];
+        memcpy(m_Data, other.m_Data, m_Size + 1);
     }
+
+    String(String &&other) noexcept {
+        printf("Moved!\n");
+        m_Size = other.m_Size;
+        m_Data = other.m_Data;
+        other.m_Data = nullptr;
+        other.m_Size = 0;
+    }
+
+    ~String() { delete[] m_Data; }
+
+    void Print() {
+        if (m_Data)
+            printf("%s\n", m_Data);
+    }
+
+  private:
+    char *m_Data = nullptr;
+    uint32_t m_Size = 0;
 };
 
-int main() {
-    std::cout << "--- 获取单例实例 (局部静态变量方式) ---" << std::endl;
-
-    // 获取第一个单例实例
-    Singleton &s1 = Singleton::getInstance();
-    std::cout << "s1 的地址: " << &s1 << std::endl;
-    s1.showMessage();
-
-    // 获取第二个单例实例
-    Singleton &s2 = Singleton::getInstance();
-    std::cout << "s2 的地址: " << &s2 << std::endl;
-    s2.showMessage();
-
-    // 验证 s1 和 s2 是否是同一个实例
-    if (&s1 == &s2) {
-        std::cout << "s1 和 s2 是同一个实例！✨" << std::endl;
-    } else {
-        std::cout << "s1 和 s2 不是同一个实例！⚠️" << std::endl;
+class Entity {
+  public:
+    Entity(const String &name) : m_Name(name) {
+        printf("Entity created with L-value!\n");
     }
+    Entity(String &&name) : m_Name(std::move(name)) {
+        printf("Entity created with R-value!\n");
+    }
+    void PrintName() { m_Name.Print(); }
 
-    std::cout << "\n程序执行完毕." << std::endl;
-    // 局部静态变量会在程序结束时自动销毁，无需手动 cleanup
+  private:
+    String m_Name;
+};
+
+int main(int argc, const char *argv[]) {
+    printf("--- 1. 使用临时对象(右值)构造 entity ---\n");
+    Entity entity(String("Cherno"));
+    entity.PrintName();
+
+    printf("\n--- 2. 使用具名对象(左值)构造 entity2 ---\n");
+    String appName = "App";
+    Entity entity2(appName);
+    entity2.PrintName();
+
     return 0;
 }
