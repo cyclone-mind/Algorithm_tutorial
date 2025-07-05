@@ -7,9 +7,9 @@ int removeElement(std::vector<int> &nums, int val)
     int slow = 0;
     for (int fast = 0; fast < nums.size(); fast++)
     {
-        if (nums[fast] != val)
+        if (nums[fast] != val) // 快指针负责判断
         {
-            nums[slow++] = nums[fast];
+            nums[slow++] = nums[fast]; // 慢指针负责填充，不是目标值，则填充
         }
     }
     return slow;

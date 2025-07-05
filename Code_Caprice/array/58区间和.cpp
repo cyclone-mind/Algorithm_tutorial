@@ -11,7 +11,7 @@ int main()
     for (int i = 0; i < n; i++)
     {
         // cin >> vec[i];
-        scanf("%d",&vec[i]);
+        scanf_s("%d",&vec[i]);
         persum += vec[i];
         p[i] = persum;
     }
