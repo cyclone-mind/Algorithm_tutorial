@@ -10,7 +10,10 @@ vector<int> intersection(vector<int> &nums1, vector<int> &nums2)
     for (int num : nums2)
     {
         // 发现nums2的元素 在nums_set里又出现过
-        if (nums_set.find(num) != nums_set.end())
+        if (nums_set.find(num) != nums_set.end()) 
+        // 返回值是一个迭代器（iterator）
+        // 如果找到元素，返回指向该元素的迭代器
+        // 如果没找到，返回 nums_set.end()
         {
             result_set.insert(num);
         }
