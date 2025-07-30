@@ -1,48 +1,115 @@
-#include <string>
-#include <iostream>
-using namespace std;
 
-void removeExtraSpaces(string& s) {
-    int slow = 0; // 慢指针，用于构建新字符串
-    for (int fast = 0; fast < s.size(); fast++) {
-        // 如果当前字符不是空格，或者当前是空格但前一个字符不是空格（避免连续空格）
-        if (s[fast] != ' ') {
-            // 处理非空格字符
-            s[slow++] = s[fast];
-        } else if (slow > 0 && s[slow - 1] != ' ') {
-            // 处理第一个空格（避免连续空格）
-            s[slow++] = s[fast];
+
+#include <cstddef>
+#include <initializer_list>
+#include <stdexcept>
+template <typename T> class MyVector {
+  private:
+    T *elements;
+    size_t size;
+    size_t capacity;
+
+  public:
+  void reserve(size_t newCapacity) {
+    if (newCapacity > capacity) {
+        T *newelements = new T[newCapacity];
+        if (elements != nullptr) {
+            std::copy(elements, elements + size, newelements);
+        }
+        delete[] elements;
+        elements = newelements;
+        capacity = newCapacity;
+    }
+}
+    MyVector() : elements(nullptr), size(0), capacity(0) {}
+    ~MyVector() { delete[] elements; }
+
+    MyVector(std::initializer_list<T> list): elements(nullptr),size(0),capacity(0){
+        reserve(list.size()*2);
+        size = list.size();
+        std::copy(list.begin(),list.end(),elements);
+    }
+    explicit MyVector(size_t count) : elements(nullptr),size(0),capacity(0) {
+        reserve(count);
+        for(size_t i = 0;i < count;i++){
+            new (elements + i) T();
+        }
+        size = count;
+    }
+    MyVector(size_t count,const T& value) : elements(nullptr),size(0),capacity(0) {
+        reserve(count);
+        std::fill(elements,elements+count,value);
+        size = count;
+    }
+    MyVector(const MyVector &orther) : size(orther.size), capacity(orther.capacity) {
+        if (capacity > 0) {
+            elements = new T[capacity];
+            std::copy(orther.elements, orther.elements + orther.size, elements);
+        } else {
+            elements = nullptr;
         }
     }
-    // 移除末尾可能的多余空格
-    if (slow > 0 && s[slow - 1] == ' ') {
-        slow--;
-    }
-    s.resize(slow);
-}
-
-
-void reverse(string& s,int strat,int end){
-    for(int i = strat,j = end;i < j;i++,j--){
-        swap(s[i],s[j]);
-    }
-}
-string reverseWords(string s) {
-    removeExtraSpaces(s);
-    reverse(s,0,s.size() - 1);
-    int left = 0;
-    for(int right = 0;right <= s.size();right++){
-        if(s[right] == ' ' || right == s.size()){
-            reverse(s,left,right - 1);
-            left = right + 1;
+    MyVector &operator=(const MyVector &orther) {
+        if (this != orther) {
+            delete[] elements;
+            size = orther.size;
+            capacity = orther.capacity;
+            if (orther.capacity > 0) {
+                elements = new T[orther.capacity];
+                std::copy(orther.elements, orther.elements + orther.size,
+                          elements);
+            } else {
+                elements = nullptr;
+            }
         }
     }
-    return s;
-}
 
-int main()
-{
-    string s = "  hello world  ";
-    string news = reverseWords(s);
-    std::cout << news << std::endl;
-}
+
+    void push_back(const T &value) {
+        if (size == capacity)
+            reserve(capacity == 0 ? 1 : capacity * 2);
+        elements[size++] = value;
+    }
+    void pop_back() {
+        if (size > 0)
+            --size;
+    }
+    void insert(const size_t index, const T &value) {
+        if (index > size) {
+            throw std::out_of_range("Index out of range");
+        }
+        if (size == capacity)
+            reserve(capacity == 0 ? 1 : capacity * 2);
+        for (size_t i = size; i > index; i--) {
+            elements[i] = elements[i - 1];
+        }
+        elements[index] = value;
+        size++;
+    }
+    size_t getSize() const { return size; }
+    size_t empty() const { return size == 0; }
+    size_t getCapacity() const { return capacity; }
+    T get(const size_t index) const {
+        if(index >= size) { return -1;}
+        return elements[index];
+    }
+    T &operator[](const size_t index) {
+        if (index >= size) {
+            throw std::out_of_range("Index out of range");
+        }
+        return elements[index];
+    }
+    const T &operator[](const size_t index) const {
+        if (index >= size) {
+            throw std::out_of_range("Index out of range");
+        }
+        return elements[index];
+    }
+    void clear(){
+        size = 0;
+    }
+    T *begin() { return elements; }
+    T *end() { return elements + size; }
+    const T *begin() const { return elements; }
+    const T *end() const { return elements + size; }
+};

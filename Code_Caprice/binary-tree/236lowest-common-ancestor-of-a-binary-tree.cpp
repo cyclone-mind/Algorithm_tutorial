@@ -19,7 +19,7 @@ struct TreeNode {
 
 TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
 
-    if(root == nullptr) return nullptr; // 遍历到空节点返回空姐点
+    if(root == nullptr) return nullptr; // 遍历到空节点返回空节点
     if(root == p || root == q) return root; // 遍历到 p 或 q 节点返回 p 或 q 节点
     TreeNode* left = lowestCommonAncestor(root->left, p, q); // 向左递归拿到 p 或 q 或空节点
     TreeNode* right = lowestCommonAncestor(root->right, p, q); // 向右递归拿到 p 或 q 或空节点
