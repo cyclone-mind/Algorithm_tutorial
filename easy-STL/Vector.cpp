@@ -90,15 +90,17 @@ template <typename T> class MyVector {
     // 易错点5: 析构函数必须释放动态分配的内存
     ~MyVector() { delete[] elements; }
 
-    // 易错点6: 拷贝构造函数使用初始化列表，避免重复初始化
-    MyVector(const MyVector &other)
-        : size(other.size), capacity(other.capacity) {
-        // 易错点7: 如果capacity为0，不要分配内存
-        if (capacity > 0) {
-            elements = new T[capacity];
-            std::copy(other.elements, other.elements + size, elements);
-        } else {
-            elements = nullptr;
+    /*  易错点6: 拷贝构造函数使用初始化列表。
+     * 本质上注意3点。
+     * 1.容量为0的对象没必要分配空间
+     * 2.大小为0的对象没必要复制元素
+     * 3.防止elements == nullptr 但 `sz > 0` 或 `cap > 0`（这会导致访问非法内存）所以即使限制了sz>0，仍要判断elements是否为空
+    */
+    MyVector(const MyVector &orther)
+        : elements(orther.capacity ? new T[orther.capacity] : nullptr), size(orther.size),
+          capacity(orther.capacity) {
+        if(size > 0 && orther.elements != nullptr) {
+            std::copy(orther.elements, orther.elements + size, elements);
         }
     }
 
@@ -107,13 +109,11 @@ template <typename T> class MyVector {
         // 易错点9: 自赋值检查是必须的，避免删除自己的内存
         if (this != &other) {
             delete[] elements; // 先释放旧内存
-            capacity = other.capacity;
+            elements = other.capacity ? new T[other.capacity] : nullptr;
             size = other.size;
-            if (capacity > 0) {
-                elements = new T[capacity];
+            capacity = other.capacity;
+            if (size > 0 && other.elements != nullptr) {
                 std::copy(other.elements, other.elements + size, elements);
-            } else {
-                elements = nullptr;
             }
         }
         return *this; // 易错点10: 必须返回*this支持链式赋值
